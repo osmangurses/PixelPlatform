@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Movement : MonoBehaviour
 {
@@ -11,38 +12,41 @@ public class Movement : MonoBehaviour
     Rigidbody2D body;
     float moveDirection = 0;
     bool isGrounded;
+    bool isDeath;
     private void Start()
     {
         body = GetComponent<Rigidbody2D>();
     }
     private void Update()
     {
-        GroundCheck();
-        moveDirection = Input.GetAxis("Horizontal");
-        if (isGrounded==false)
+        if (!isDeath)
         {
-            if (body.velocity.y>0)
+            GroundCheck();
+            moveDirection = Input.GetAxis("Horizontal");
+            if (isGrounded == false)
             {
-                GetComponent<Animator>().Play("JumpUp");
+                if (body.velocity.y > 0)
+                {
+                    GetComponent<Animator>().Play("JumpUp");
+                }
+                else
+                {
+                    GetComponent<Animator>().Play("JumpDown");
+                }
+            }
+            else if (moveDirection == 0)
+            {
+                GetComponent<Animator>().Play("Idle");
             }
             else
             {
-                GetComponent<Animator>().Play("JumpDown");
+                GetComponent<Animator>().Play("Run");
             }
-        }
-        else if (moveDirection==0)
-        {
-            GetComponent<Animator>().Play("Idle");
-        }
-        else
-        {
-            GetComponent<Animator>().Play("Run");
-        }
-        if (Input.GetButtonDown("Jump") && isGrounded==true)
-        {
-            body.AddForce(Vector3.up*jumpForce);
-        }
-        
+            if (Input.GetButtonDown("Jump") && isGrounded == true)
+            {
+                body.AddForce(Vector3.up * jumpForce);
+            }
+        } 
     }
     private void FixedUpdate()
     {
@@ -56,6 +60,20 @@ public class Movement : MonoBehaviour
         {
             GetComponent<SpriteRenderer>().flipX = true;
         }
+    }
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Obstacle"))
+        {
+            Destroy(GetComponent<Rigidbody2D>());
+            isDeath = true;
+            GetComponent<Animator>().Play("Death");
+            Invoke("ReloadScene", 0.5f);
+        }
+    }
+    void ReloadScene()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
     public float rayLength;
     public Vector3 rayPosition;
