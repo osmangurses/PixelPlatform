@@ -70,7 +70,7 @@ public class Movement : MonoBehaviour
             isDeath = true;
             Destroy(GetComponent<Rigidbody2D>());
             GetComponent<Animator>().Play("Death");
-            Invoke("ReloadScene", 0.5f);
+            Invoke("ReloadScene", 1f);
         }
     }
     void ReloadScene()
