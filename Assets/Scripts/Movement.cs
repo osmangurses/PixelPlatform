@@ -7,6 +7,7 @@ public class Movement : MonoBehaviour
 {
     public int speed;
     public int jumpForce;
+    public bool isKeyboard;
 
     Rigidbody2D body;
     float moveDirection = 0;
@@ -41,11 +42,18 @@ public class Movement : MonoBehaviour
             {
                 GetComponent<Animator>().Play("Run");
             }
-            if (Input.GetButtonDown("Jump") && isGrounded == true)
+            if (isKeyboard && Input.GetButtonDown("Jump"))
             {
-                body.AddForce(Vector3.up * jumpForce);
+                Jump();
             }
         } 
+    }
+    public void Jump()
+    {
+        if (isGrounded == true)
+        {
+            body.AddForce(Vector3.up * jumpForce);
+        }
     }
     private void FixedUpdate()
     {
