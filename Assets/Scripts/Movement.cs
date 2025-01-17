@@ -8,6 +8,7 @@ public class Movement : MonoBehaviour
     public int speed;
     public int jumpForce;
     public bool isKeyboard;
+    public AudioSource stepAudio, jumpAudio;
 
     Rigidbody2D body;
     float moveDirection = 0;
@@ -22,7 +23,18 @@ public class Movement : MonoBehaviour
         if (!isDeath)
         {
             GroundCheck();
-            moveDirection = Input.GetAxis("Horizontal");
+            if (moveDirection!=0 && !stepAudio.isPlaying && isGrounded)
+            {
+                stepAudio.Play();
+            }
+            if (moveDirection==0 && stepAudio.isPlaying)
+            {
+                stepAudio.Stop();
+            }
+            if (isKeyboard)
+            {
+                moveDirection = Input.GetAxis("Horizontal");
+            }
             if (isGrounded == false)
             {
                 if (body.velocity.y > 0)
@@ -53,7 +65,13 @@ public class Movement : MonoBehaviour
         if (isGrounded == true)
         {
             body.AddForce(Vector3.up * jumpForce);
+            jumpAudio.Play();
+           
         }
+    }
+    public void ChangeMoveDir(int newDir)
+    {
+        moveDirection = newDir;
     }
     private void FixedUpdate()
     {
@@ -97,7 +115,8 @@ public class Movement : MonoBehaviour
         }
         else
         {
-            isGrounded = false;
+            isGrounded = false; 
+            stepAudio.Stop();
         }
     }
 }
