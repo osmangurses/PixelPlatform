@@ -98,6 +98,11 @@ public class Movement : MonoBehaviour
             GetComponent<Animator>().Play("Death");
             Invoke("ReloadScene", 1f);
         }
+        if (collision.gameObject.tag=="Finish")
+        {
+            PlayerPrefs.SetInt("Level",SceneManager.GetActiveScene().buildIndex+1);
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        }
     }
     void ReloadScene()
     {
